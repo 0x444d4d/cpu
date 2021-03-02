@@ -110,34 +110,3 @@ module banco_salida (input wire[7:0] in, input wire[1:0] select, input wire we, 
 
 endmodule
 
-module stack #(parameter WIDTH=10, parameter DEPTH=10) (input wire [WIDTH - 1:0] in,
-																												input wire push, pop,
-																												output wire [WIDTH-1: 0] out,
-																												output wire uppper_rng_lim,
-																												lower_rng_limit);
-reg [($clog2(DEPTH+1)-1):0] index;
-reg [DEPTH-1:0] addresses;
-
-initial
-begin
-	index <= 0;
-end
-
-always @(posedge push, posedge pop)
-begin
-	if (push & ~pop) begin
-		if (!uppper_rng_lim)
-			index <= index + 1;
-			addresses[index] <= in;
-	end
-
-	if (~push & pop) begin
-		if (!lower_rng_limit)
-			index <= index - 1;
-	end
-end
-
-assign uppper_rng_lim = index >= 10 ? 1'b1 : 1'b0;
-assign lower_rng_limit = index <= 0 ? 1'b1 : 1'b0;
-assign out = addresses[index];
-endmodule
